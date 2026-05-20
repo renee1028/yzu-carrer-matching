@@ -3,22 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YZU Career Development & Opportunity Matching (Demo)</title>
+    <title>YZU Career Development & Opportunity Matching</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;850;900&display=swap');
+        body { 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-[#f8fafc] flex text-slate-900 antialiased min-h-screen selection:bg-indigo-500 selection:text-white">
+<body class="bg-[#f8fafc] text-slate-900 antialiased min-h-screen flex flex-col md:flex-row selection:bg-indigo-500 selection:text-white">
 
-    <aside class="w-72 bg-white border-r border-slate-200 shrink-0 hidden md:flex flex-col justify-between sticky top-0 h-screen z-30 shadow-sm">
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white border-b border-slate-200 h-16 px-6 flex items-center justify-between sticky top-0 z-40 shadow-sm w-full">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-md">
+                YZU
+            </div>
+            <div>
+                <span class="font-black text-xs text-slate-800 block">YZU Student Services</span>
+                <span class="text-[8px] text-indigo-500 font-extrabold tracking-wider uppercase">Career Center</span>
+            </div>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+            <i data-lucide="menu" id="mobile-menu-icon" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar Backdrop (Mobile only) -->
+    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-35 hidden md:hidden transition-opacity"></div>
+
+    <!-- Sidebar Navigation Layout -->
+    <aside id="main-sidebar" class="w-72 bg-white border-r border-slate-150 shrink-0 flex flex-col justify-between fixed md:sticky top-16 md:top-0 h-[calc(100vh-4rem)] md:h-screen z-30 shadow-sm transition-transform -translate-x-full md:translate-x-0 overflow-y-auto">
         <div class="p-6">
-            <div class="flex items-center gap-3.5 mb-10 border-b border-slate-150 pb-6">
-                <div class="w-11 h-11 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-indigo-600/30">
+            <!-- Brand Logo Header (Desktop Only) -->
+            <div class="hidden md:flex items-center gap-3.5 mb-10 border-b border-slate-100 pb-6">
+                <div class="w-11 h-11 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-indigo-600/35">
                     YZU
                 </div>
                 <div>
@@ -27,22 +54,31 @@
                 </div>
             </div>
 
-            <nav class="space-y-4">
+            <!-- Nav Links -->
+            <nav class="space-y-6">
+                <!-- Main Dashboard link placeholder -->
+                <div class="space-y-1">
+                    <button onclick="showMockDashboardNotice()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                        Dashboard
+                    </button>
+                </div>
+
                 <div class="space-y-1.5">
-                    <div class="flex items-center justify-between px-3 py-1 text-[11px] font-black text-slate-400 uppercase tracking-wider">
+                    <div class="flex items-center justify-between px-3 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                         <span>Career Analysis</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                     </div>
-                    <div class="pl-2 space-y-1">
-                        <button id="menu-assessment" onclick="switchTab('assessment')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-50/80 text-indigo-600 shadow-sm">
+                    <div class="pl-1.5 space-y-1">
+                        <button id="menu-assessment" onclick="switchTab('assessment')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-sm">
                             <i data-lucide="compass" class="w-4 h-4 shrink-0"></i>
                             1. Career Assessment
                         </button>
-                        <button id="menu-learning" onclick="switchTab('learning')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <button id="menu-learning" onclick="switchTab('learning')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
                             <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
                             2. Learning & Certification
                         </button>
-                        <button id="menu-network" onclick="switchTab('network')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <button id="menu-network" onclick="switchTab('network')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
                             <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
                             3. Skill & Mentorship Network
                         </button>
@@ -50,7 +86,7 @@
                 </div>
 
                 <div class="space-y-1">
-                    <div class="px-3 py-1 text-[11px] font-black text-slate-400 uppercase tracking-wider">
+                    <div class="px-3 py-1 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                         <span>Market Match</span>
                     </div>
                     <button id="menu-jobs" onclick="switchTab('jobs')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40">
@@ -58,196 +94,466 @@
                         Job Opportunities
                     </button>
                 </div>
+
+                <!-- Footer utility links matching mockup -->
+                <div class="border-t border-slate-100 pt-4 space-y-1">
+                    <button onclick="showMockDashboardNotice()" class="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <i data-lucide="user" class="w-4 h-4"></i> My Profile
+                    </button>
+                    <button onclick="showMockDashboardNotice()" class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <span class="flex items-center gap-3"><i data-lucide="mail" class="w-4 h-4"></i> Messages</span>
+                        <span class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+                    </button>
+                    <button onclick="showMockDashboardNotice()" class="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/40">
+                        <i data-lucide="settings" class="w-4 h-4"></i> Settings
+                    </button>
+                </div>
             </nav>
         </div>
 
-        <div class="p-4 bg-slate-50 border-t border-slate-100 m-4 rounded-2xl flex items-center gap-3.5">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="User profile" class="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-100">
-            <div class="overflow-hidden">
-                <h4 class="font-black text-xs text-slate-800 truncate">Kevin Chen</h4>
-                <p class="text-[10px] text-slate-500 font-bold truncate">Information Management · Senior</p>
+        <!-- Student Profile Box -->
+        <div class="p-4 bg-slate-50 border-t border-slate-100 m-4 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" alt="Kevin Chen" class="w-10 h-10 rounded-xl object-cover ring-2 ring-indigo-100">
+                <div class="overflow-hidden">
+                    <h4 class="font-black text-xs text-slate-800 truncate">Kevin Chen</h4>
+                    <p class="text-[9px] text-slate-500 font-bold truncate">元智資管 · 四年級</p>
+                </div>
             </div>
+            <i data-lucide="chevrons-up-down" class="w-4 h-4 text-slate-400 shrink-0 cursor-pointer hover:text-slate-600"></i>
         </div>
     </aside>
 
+    <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0">
         
-        <header class="bg-white border-b border-slate-200/80 h-20 px-8 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-            <h2 id="header-title" class="font-black text-lg text-slate-900 tracking-tight">Career Assessment</h2>
-            <div class="flex items-center gap-3">
-                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-black px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> GitHub Pages Cloud Demo Mode
+        <!-- Header Bar -->
+        <header class="bg-white border-b border-slate-200/80 h-20 px-6 md:px-8 flex items-center justify-between sticky top-16 md:top-0 z-20 shadow-sm w-full">
+            <div class="flex flex-col">
+                <h2 id="header-title" class="font-black text-base md:text-xl text-slate-950 tracking-tight">Career Assessment</h2>
+                <p id="header-subtitle" class="text-[10px] md:text-xs text-slate-400 font-bold hidden md:block">Discover your best-fit careers based on your interests and academic capabilities.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Top Notification Icons from image -->
+                <div class="flex items-center gap-2">
+                    <button onclick="showMockDashboardNotice()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl relative transition-all">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
+                    </button>
+                    <button onclick="showMockDashboardNotice()" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50/50 rounded-xl relative transition-all">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="h-6 w-[1px] bg-slate-200 hidden sm:block"></div>
+                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-lg border border-emerald-200/60 flex items-center gap-1.5 shadow-sm">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Cloud Demo
                 </span>
             </div>
         </header>
 
-        <main class="flex-1 p-8 max-w-[1400px] w-full mx-auto space-y-8">
+        <!-- Main Views -->
+        <main class="flex-1 p-4 md:p-8 max-w-[1500px] w-full mx-auto space-y-8">
 
-            <section id="tab-assessment" class="space-y-6">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm">
-                    <h3 class="font-black text-slate-900 text-base">Select Your Interests</h3>
-                    <p class="text-xs text-slate-500 font-bold mt-1">請勾選你目前感興趣的領域。系統將與你在元智資管的真實學科學分成績進行大數據交叉模型計算。</p>
+            <!-- SECTION 1: Career Assessment (High-Fidelity) -->
+            <section id="tab-assessment" class="space-y-8">
+                <!-- Step Tracker Banner -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm">1</div>
+                        <div>
+                            <h3 class="font-black text-slate-900 text-sm">Step 1 of 3: Your Interests</h3>
+                            <p class="text-xs text-slate-500 font-bold">Select the areas that interest you the most. (Select up to 5)</p>
+                        </div>
+                    </div>
+                    <!-- Visual timeline matching image -->
+                    <div class="flex items-center gap-2 text-xs font-black text-slate-400 w-full md:w-auto justify-center">
+                        <span class="text-indigo-600">Interests</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Capability Mapping</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        <span>Recommended Careers</span>
+                    </div>
                 </div>
 
-                <div id="interest-cards-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                <!-- Grid of 9 Interest Cards matching image -->
+                <div id="interest-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5"></div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-7 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-6">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-50 pb-4">
-                            <div>
-                                <h4 class="font-black text-slate-900 text-sm">Capability Overview (歷年修課歷程評級)</h4>
-                                <p class="text-[11px] text-slate-400 font-semibold mt-0.5">※此圖反映你過去在校各核心指標之真實能力表現，不會隨興趣變動</p>
+                    <!-- Left: Step 2: Capability Details -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                                <div>
+                                    <h4 class="font-black text-slate-900 text-sm">Step 2 of 3: Your Capability (Based on Course Records)</h4>
+                                    <p class="text-[11px] text-slate-400 font-bold mt-0.5">系統將分析你過去在元智修習的 23 總學分核心學科表現</p>
+                                </div>
+                                <div class="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 shrink-0 text-left shadow-sm">
+                                    <p class="text-[9px] text-indigo-400 font-black uppercase tracking-wider">YZU GPA</p>
+                                    <p class="text-sm font-black text-indigo-700 mt-0.5">3.86 <span class="text-[10px] text-indigo-500 font-bold">/ 4.00</span></p>
+                                </div>
                             </div>
-                            <div class="bg-indigo-50 border border-indigo-100 rounded-xl px-3.5 py-1.5 shrink-0 text-left">
-                                <p class="text-[9px] text-indigo-400 font-black uppercase">Academic Achievement</p>
-                                <p class="text-xs font-black text-indigo-700 mt-0.5">GPA: 3.86 <span class="text-[9px] text-indigo-500 font-bold">/ 4.00</span></p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center mt-6">
+                                <div class="md:col-span-6 flex justify-center h-56 relative">
+                                    <canvas id="radarChartCanvas"></canvas>
+                                </div>
+                                <div class="md:col-span-6 space-y-4">
+                                    <div class="flex items-center justify-between border-b border-slate-50 pb-2">
+                                        <p class="font-black text-xs text-slate-800">元智資管修課學分統計</p>
+                                        <span class="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-black">23 總學分</span>
+                                    </div>
+                                    <!-- List of completed groups with real codes -->
+                                    <div id="course-summary-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                            <div class="md:col-span-6 flex justify-center h-52 relative">
-                                <canvas id="radarChartCanvas"></canvas>
-                            </div>
-                            <div class="md:col-span-6 space-y-3">
-                                <div class="flex items-center justify-between">
-                                    <p class="font-black text-xs text-slate-800">元智資管學分分數明細</p>
-                                    <span class="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-black">23 總學分數</span>
-                                </div>
-                                <div id="course-summary-list" class="space-y-2.5"></div>
-                            </div>
+                        <!-- Mini YZU Course Record Drawer (Accordion-styled trigger) -->
+                        <div class="border-t border-slate-100 pt-4 mt-4">
+                            <button onclick="toggleCourseHistoryDrawer()" class="w-full flex items-center justify-between text-xs font-black text-indigo-600 hover:text-indigo-800 transition-colors">
+                                <span class="flex items-center gap-2"><i data-lucide="clipboard-list" class="w-4 h-4"></i> 展開元智資管 (YZU IM) 完整修課細節 (23學分)</span>
+                                <i data-lucide="chevron-down" id="drawer-chevron" class="w-4 h-4 transition-transform"></i>
+                            </button>
+                            <div id="course-history-drawer" class="hidden mt-4 space-y-2 max-h-48 overflow-y-auto text-[11px] font-bold text-slate-600 border border-indigo-50/50 p-3 bg-indigo-50/10 rounded-2xl no-scrollbar"></div>
                         </div>
                     </div>
 
+                    <!-- Right: Step 3: Recommended Careers -->
                     <div class="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
                         <div class="space-y-5">
                             <div>
-                                <h4 class="font-black text-slate-900 text-sm">Recommended Careers</h4>
-                                <p class="text-[11px] text-slate-400 font-semibold mt-0.5">融合「學門強弱項評分 + 興趣領域」之大數據交叉分析結果</p>
+                                <h4 class="font-black text-slate-900 text-sm">Step 3 of 3: Recommended Careers (Preview)</h4>
+                                <p class="text-[11px] text-slate-400 font-bold mt-0.5">Top career matches based on your interests and capabilities.</p>
                             </div>
 
-                            <div id="career-analysis-placeholder" class="py-12 flex flex-col items-center justify-center text-center border-2 border-dashed border-slate-200 rounded-2xl p-4">
+                            <div id="career-analysis-placeholder" class="py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-slate-200/80 rounded-2xl p-4">
                                 <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-3">
-                                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                                    <i data-lucide="sparkles" class="w-6 h-6"></i>
                                 </div>
-                                <p class="text-xs font-black text-slate-700">尚未進行學術分析</p>
-                                <p class="text-[11px] text-slate-400 font-bold mt-1 max-w-[260px]">請確認上方興趣卡片後，點擊下方按鈕啟動智能分析對接模組。</p>
+                                <p class="text-xs font-black text-slate-700">尚未啟動學能對接</p>
+                                <p class="text-[11px] text-slate-400 font-bold mt-1.5 max-w-[280px]">請確認您感興趣的領域勾選後，點擊下方「Next: Analyze Capability」按鈕生成您的專屬職涯對接模型。</p>
                             </div>
 
-                            <div id="career-match-list" class="space-y-3 hidden"></div>
+                            <!-- List of dynamically generated career recommendations -->
+                            <div id="career-match-list" class="space-y-3.5 hidden"></div>
                         </div>
 
-                        <button id="btn-start-assess" onclick="triggerCareerAnalysis()" class="w-full mt-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-yellow-300"></i>
-                            開始智慧分析 (Analyze Capability)
+                        <button id="btn-start-assess" onclick="triggerCareerAnalysis()" class="w-full mt-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2.5 transition-all">
+                            <i data-lucide="cpu" class="w-4 h-4 text-yellow-300"></i>
+                            Next: Analyze Capability ➔
                         </button>
                     </div>
                 </div>
+
+                <!-- Footer Promo Banner from image -->
+                <div class="bg-indigo-50/40 rounded-3xl p-5 border border-indigo-100/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-700 shadow-sm"><i data-lucide="rocket" class="w-6 h-6"></i></div>
+                        <div>
+                            <p class="font-black text-xs text-slate-800">準備好發揮你的潛力了嗎？</p>
+                            <p class="text-[10px] text-slate-500 font-semibold mt-0.5">透過智慧分析診斷學分強弱，媒合全校特約實習與業界大廠實習機會！</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('jobs')" class="px-5 py-2.5 bg-white text-indigo-600 border border-indigo-150 rounded-xl text-xs font-black shadow-sm hover:bg-indigo-50/50 transition-all">查看校園徵才 Vacancies</button>
+                </div>
             </section>
 
-            <section id="tab-learning" class="space-y-6 hidden">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="space-y-1">
-                        <h3 class="font-black text-slate-900 text-base">Personalized Skill Gap Analytics</h3>
-                        <p class="text-xs text-slate-500 font-bold">切換目標職務，診斷出你的學科強弱分數與其所需技術之知識落差（Skill Gaps）。</p>
+            <!-- SECTION 2: Learning & Certification -->
+            <section id="tab-learning" class="space-y-8 hidden">
+                <!-- Dropdown selector bar identical to Learning&Certification.jpg -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-5 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-slate-900 text-sm">Target Job</h4>
+                            <p class="text-[11px] text-slate-400 font-bold mt-0.5">Select the job role you are targeting to see recommendations.</p>
+                        </div>
                     </div>
-                    <select id="target-job-select" onchange="fetchLearningRecommendations()" class="bg-slate-100 text-slate-800 text-xs font-black border border-slate-200 rounded-xl px-4 py-2.5 outline-none cursor-pointer">
-                        <option value="Security Engineer">Security Engineer 資訊安全工程師</option>
-                        <option value="Data Scientist">Data Scientist 數據科學家</option>
-                        <option value="Software Engineer">Software Engineer 軟體開發工程師</option>
-                    </select>
+                    <div class="md:col-span-3">
+                        <select id="target-job-select" onchange="fetchLearningRecommendations()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-black rounded-xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-indigo-500 shadow-sm">
+                            <option value="Security Engineer">Security Engineer 資訊安全工程師</option>
+                            <option value="Data Scientist">Data Scientist 數據科學家</option>
+                            <option value="Software Engineer">Software Engineer 軟體開發工程師</option>
+                            <option value="FinTech Consultant">FinTech Consultant 金融科技顧問</option>
+                            <option value="UI/UX Designer">UI/UX Designer 產品設計師</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 flex items-center gap-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-indigo-500 shrink-0"></i>
+                        <div>
+                            <p class="text-[10px] text-slate-700 font-black">Why choose a target job?</p>
+                            <p class="text-[9px] text-slate-400 font-bold">We will customize recommendations based on your current skill gaps.</p>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Three Column Grid matching mockup -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
-                        <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="book-open" class="text-indigo-600 w-4 h-4"></i> Recommended Courses</h4>
-                        <div id="recommended-courses-box" class="space-y-3"></div>
+                    <!-- Column 1: Recommended Courses -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="book" class="text-indigo-600 w-4 h-4"></i> Recommended Courses</h4>
+                                <span class="text-[9px] text-indigo-500 font-bold hover:underline cursor-pointer">View All ➔</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-bold -mt-3">Courses tailored to close your skill gaps</p>
+                            <div id="recommended-courses-box" class="space-y-4"></div>
+                        </div>
+                        <button onclick="showMockDashboardNotice()" class="w-full mt-6 py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 border border-indigo-100 rounded-xl text-[11px] font-black transition-all">Explore More Courses ➔</button>
                     </div>
-                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
-                        <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="award" class="text-indigo-600 w-4 h-4"></i> Certifications to Pursue</h4>
-                        <div id="recommended-certs-box" class="space-y-3"></div>
+
+                    <!-- Column 2: Certifications to Pursue -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="award" class="text-indigo-600 w-4 h-4"></i> Certifications to Pursue</h4>
+                                <span class="text-[9px] text-indigo-500 font-bold hover:underline cursor-pointer">View All ➔</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-bold -mt-3">Industry-recognized certifications to boost profile</p>
+                            <div id="recommended-certs-box" class="space-y-4"></div>
+                        </div>
+                        <button onclick="showMockDashboardNotice()" class="w-full mt-6 py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 border border-indigo-100 rounded-xl text-[11px] font-black transition-all">Explore More Certifications ➔</button>
                     </div>
-                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
-                        <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="calendar" class="text-indigo-600 w-4 h-4"></i> Upcoming Campus Activities</h4>
-                        <div id="recommended-activities-box" class="space-y-3"></div>
+
+                    <!-- Column 3: Upcoming Campus Activities -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <h4 class="font-black text-slate-900 text-xs flex items-center gap-2"><i data-lucide="calendar" class="text-indigo-600 w-4 h-4"></i> Upcoming Campus Activities</h4>
+                                <span class="text-[9px] text-indigo-500 font-bold hover:underline cursor-pointer">View All ➔</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-bold -mt-3">Workshops, seminars, and events to enhance skills</p>
+                            <div id="recommended-activities-box" class="space-y-4"></div>
+                        </div>
+                        <button onclick="showMockDashboardNotice()" class="w-full mt-6 py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 border border-indigo-100 rounded-xl text-[11px] font-black transition-all">View All Activities ➔</button>
+                    </div>
+                </div>
+
+                <!-- Footer Growth Banner matching mockup -->
+                <div class="bg-indigo-50/40 rounded-3xl p-6 border border-indigo-100/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 bg-indigo-600/10 text-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                            <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-black text-slate-900 text-xs">Keep Learning, Keep Growing!</h5>
+                            <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Consistent learning and hands-on practice will help you stay competitive and achieve your career goals.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-network" class="space-y-6 hidden">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm flex gap-3">
-                    <button id="net-tab-team" onclick="switchNetworkSubTab('team')" class="px-5 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-md">Find Team Members</button>
-                    <button id="net-tab-mentors" onclick="switchNetworkSubTab('mentors')" class="px-5 py-2.5 rounded-xl text-xs font-black transition-all text-slate-500 hover:bg-slate-100">Find Alumni Mentors</button>
-                </div>
-
+            <!-- SECTION 3: Skill & Mentorship Network -->
+            <section id="tab-network" class="space-y-8 hidden">
+                <!-- Dual Split Section matching Skill Network.jpg -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-5 h-fit">
-                        <h4 class="font-black text-slate-900 text-xs">精準搜尋指標</h4>
-                        <div class="space-y-1.5">
-                            <label class="text-[11px] text-slate-400 font-extrabold block">系所依據 (Department)</label>
-                            <select id="network-dept-select" onchange="fetchNetworkData()" class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl px-3 py-2.5 outline-none">
-                                <option value="所有系所">所有資訊學群系所</option>
-                                <option value="資訊管理學系">資訊管理學系</option>
-                                <option value="資訊工程學系">資訊工程學系</option>
-                            </select>
+                    
+                    <!-- Left Column: Find Team Members -->
+                    <div class="lg:col-span-6 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="border-b border-slate-100 pb-3">
+                                <h3 class="font-black text-slate-900 text-sm">Find Team Members</h3>
+                                <p class="text-[11px] text-slate-400 font-bold mt-0.5">Find classmates with the skills you need to build an amazing team.</p>
+                            </div>
+
+                            <!-- Skills input area -->
+                            <div class="space-y-2">
+                                <label class="text-[11px] text-slate-400 font-black block">I need help with (skills)</label>
+                                <div id="active-skills-chips" class="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-12 items-center">
+                                    <span class="text-[10px] text-slate-400 font-bold">請於下方選取技術條件...</span>
+                                </div>
+                            </div>
+
+                            <!-- Skill selector pills -->
+                            <div class="space-y-2">
+                                <label class="text-[11px] text-slate-400 font-black block">快捷選取技術條件 Tag</label>
+                                <div id="network-quick-tags-team" class="flex flex-wrap gap-2"></div>
+                            </div>
+
+                            <!-- Additional Dropdown Filters mimicking mockup -->
+                            <div class="grid grid-cols-3 gap-3 border-t border-slate-50 pt-3">
+                                <div class="space-y-1">
+                                    <label class="text-[9px] text-slate-400 font-bold">Department</label>
+                                    <select onchange="fetchNetworkData()" id="team-dept-filter" class="w-full bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg p-2 outline-none">
+                                        <option value="All">All</option>
+                                        <option value="資訊管理學系">資訊管理學系</option>
+                                        <option value="資訊工程學系">資訊工程學系</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[9px] text-slate-400 font-bold">Year</label>
+                                    <select onchange="fetchNetworkData()" id="team-year-filter" class="w-full bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg p-2 outline-none">
+                                        <option value="All">All</option>
+                                        <option value="Junior">大三</option>
+                                        <option value="Senior">大四</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[9px] text-slate-400 font-bold">Availability</label>
+                                    <select class="w-full bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg p-2 outline-none">
+                                        <option>All</option>
+                                        <option>Weekends</option>
+                                        <option>Evenings</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Student List Matching -->
+                            <div class="space-y-3.5 pt-4">
+                                <div class="flex items-center justify-between text-[11px] font-black text-slate-400">
+                                    <span id="student-match-count">Matching Students (3)</span>
+                                    <span>Sort by: Relevance ▾</span>
+                                </div>
+                                <div id="students-match-list" class="space-y-3"></div>
+                            </div>
                         </div>
-                        <div class="space-y-2 border-t border-slate-100 pt-3">
-                            <label class="text-[11px] text-slate-400 font-extrabold block">快捷選取技術專長 Tag</label>
-                            <div id="network-quick-tags" class="flex flex-wrap gap-1.5"></div>
-                        </div>
-                        <div id="filter-team-section" class="space-y-3 border-t border-slate-100 pt-3">
-                            <div id="active-skills-chips" class="flex flex-wrap gap-1.5"></div>
-                        </div>
+                        <button onclick="showMockDashboardNotice()" class="w-full mt-6 py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 border border-indigo-100 rounded-xl text-[11px] font-black transition-all">View All Students ➔</button>
                     </div>
-                    <div class="lg:col-span-8 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
-                        <p id="network-results-title" class="font-black text-slate-900 text-xs">Matching Results</p>
-                        <div id="network-cards-box" class="space-y-3"></div>
+
+                    <!-- Right Column: Find Alumni & Faculty Mentors -->
+                    <div class="lg:col-span-6 bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="border-b border-slate-100 pb-3">
+                                <h3 class="font-black text-slate-900 text-sm">Find Alumni & Faculty Mentors</h3>
+                                <p class="text-[11px] text-slate-400 font-bold mt-0.5">Connect with alumni and university professors to receive career advice and academic guidance.</p>
+                            </div>
+
+                            <!-- Mentor Search Bar -->
+                            <div class="relative">
+                                <input type="text" placeholder="Search by name, research area, industry, or company..." class="w-full bg-slate-50 border border-slate-100 text-xs font-bold rounded-2xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                            </div>
+
+                            <!-- Popular Path Filters -->
+                            <div class="space-y-2">
+                                <label class="text-[11px] text-slate-400 font-black block">Popular Career & Academic Paths</label>
+                                <div id="network-quick-tags-mentors" class="flex flex-wrap gap-2"></div>
+                            </div>
+
+                            <!-- Mentor List Matching -->
+                            <div class="space-y-3.5 pt-4">
+                                <div class="flex items-center justify-between text-[11px] font-black text-slate-400">
+                                    <span>Recommended Mentors (6)</span>
+                                    <span>Sort by: Relevance ▾</span>
+                                </div>
+                                <div id="mentors-match-list" class="space-y-3"></div>
+                            </div>
+                        </div>
+                        <button onclick="showMockDashboardNotice()" class="w-full mt-6 py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 border border-indigo-100 rounded-xl text-[11px] font-black transition-all">View All Mentors ➔</button>
+                    </div>
+
+                </div>
+
+                <!-- Footer Connection Banner -->
+                <div class="bg-indigo-50/40 rounded-3xl p-6 border border-indigo-100/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 bg-indigo-600/10 text-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-black text-slate-900 text-xs">Build Connections, Achieve More</h5>
+                            <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Collaborating with peers on projects and getting guidance from mentors will accelerate your professional development.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-jobs" class="space-y-6 hidden">
-                <div class="bg-indigo-50/40 border border-indigo-100/80 p-5 rounded-3xl shadow-sm grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4 flex flex-col justify-center border-b md:border-b-0 md:border-r border-indigo-100 pb-4 md:pb-0 md:pr-4">
+            <!-- SECTION 4: Job Opportunities -->
+            <section id="tab-jobs" class="space-y-8 hidden">
+                <!-- Academic Alignment Card (Your Reference Profile) -->
+                <div class="bg-indigo-50/40 border border-indigo-100/80 p-5 rounded-3xl shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-4 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-indigo-100/50 pb-4 lg:pb-0 lg:pr-6">
                         <h4 class="font-black text-indigo-950 text-xs flex items-center gap-2"><i data-lucide="award" class="text-indigo-600 w-4 h-4"></i> Your Reference Profile</h4>
-                        <p class="text-[10px] text-slate-500 font-bold mt-1">此區塊同步你在元智的真實修課分數，便於與下方工作的技術要求進行即時對照。</p>
-                        <div class="mt-2.5 flex flex-wrap gap-1.5 text-[9px]">
-                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-black">強項領域: 程式開發</span>
-                            <span class="bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded font-black">弱勢領域: 系統設計</span>
+                        <p class="text-[10px] text-slate-500 font-bold mt-1">此欄位同步您在元智資管（YZU IM）的完整學科學程表現，用於與下方工作的技能要求進行即時交叉評估對照。</p>
+                        <div class="mt-3 flex flex-wrap gap-1.5 text-[9px]">
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200/50 px-2.5 py-0.5 rounded font-black">強項：程式設計 / 問題解決</span>
+                            <span class="bg-rose-50 text-rose-700 border border-rose-200/50 px-2.5 py-0.5 rounded font-black">弱項：系統設計 / 網際網路概論</span>
                         </div>
                     </div>
-                    <div class="md:col-span-4 flex justify-center h-28 relative">
+                    <div class="lg:col-span-4 flex justify-center h-44 relative">
                         <canvas id="jobTopRadarCanvas"></canvas>
                     </div>
-                    <div class="md:col-span-4 text-[10px] space-y-1 text-slate-600 font-bold">
-                        <div class="flex items-center justify-between pb-1 border-b border-indigo-100/50">
-                            <span class="font-black text-slate-800">總學術成績：</span>
+                    <div class="lg:col-span-4 text-[10px] space-y-1.5 text-slate-600 font-bold bg-white/60 p-4 rounded-2xl border border-indigo-50/60 shadow-sm">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-indigo-100/40">
+                            <span class="font-black text-slate-800">修業總評量：</span>
                             <span class="text-indigo-700 font-black">GPA 3.86 (23學分)</span>
                         </div>
-                        <div class="flex justify-between pt-0.5"><span>程式設計基礎</span><span class="text-emerald-600 font-black">95分 (強)</span></div>
-                        <div class="flex justify-between"><span>資料結構與分析</span><span class="text-emerald-600 font-black">92分 (強)</span></div>
-                        <div class="flex justify-between"><span>系統分析與設計</span><span class="text-rose-600 font-black">74分 (弱)</span></div>
+                        <div class="flex justify-between pt-0.5"><span>Programming (程式開發)</span><span class="text-emerald-600 font-black">95分 (A+)</span></div>
+                        <div class="flex justify-between"><span>Data Analysis (數據結構分析)</span><span class="text-emerald-600 font-black">92分 (A+)</span></div>
+                        <div class="flex justify-between"><span>System Design (系統分析與設計)</span><span class="text-amber-600 font-black">74分 (B-)</span></div>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm space-y-4">
-                    <div id="job-source-filters" class="flex flex-wrap gap-1.5">
-                        <button onclick="filterJobs('all')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-indigo-600 text-white border-indigo-600">全部平台綜合來源</button>
-                        <button onclick="filterJobs('104')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300">104人力銀行</button>
-                        <button onclick="filterJobs('linkedin')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300">LinkedIn</button>
-                        <button onclick="filterJobs('yzu')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300">元智特約合作與產學實習</button>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-3 space-y-1.5">
-                        <label class="text-[11px] text-slate-400 font-black block">依工作技術內容過濾 (Tag Filter):</label>
-                        <div id="job-tech-tags" class="flex flex-wrap gap-1.5">
-                            <button onclick="setJobTechTagFilter(null)" class="job-tag-btn px-2.5 py-1 bg-indigo-50 text-indigo-700 font-black text-[10px] rounded-md border border-indigo-200">顯示所有技術</button>
-                            <button onclick="setJobTechTagFilter('Python')" class="job-tag-btn px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-[10px] rounded-md border border-slate-200 hover:bg-slate-50">Python</button>
-                            <button onclick="setJobTechTagFilter('SQL')" class="job-tag-btn px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-[10px] rounded-md border border-slate-200 hover:bg-slate-50">SQL</button>
-                            <button onclick="setJobTechTagFilter('Information Security')" class="job-tag-btn px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-[10px] rounded-md border border-slate-200 hover:bg-slate-50">Information Security</button>
+                <!-- Comprehensive Multi-source Employment Filters mimicking Job Opportunities.jpg -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-5">
+                    <!-- Dropdown Row -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-400 font-bold">Opportunity Type</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none">
+                                <option>All Types</option>
+                                <option>Internship</option>
+                                <option>Full-time</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-400 font-bold">Job Category</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none">
+                                <option>All Categories</option>
+                                <option>Software Development</option>
+                                <option>Data & Analytics</option>
+                                <option>Security</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-400 font-bold">Location</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none">
+                                <option>All Locations</option>
+                                <option>Taipei, Taiwan</option>
+                                <option>Hsinchu, Taiwan</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] text-slate-400 font-bold">Work Mode</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none">
+                                <option>All Modes</option>
+                                <option>On-site</option>
+                                <option>Hybrid</option>
+                                <option>Remote</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1 col-span-2 md:col-span-1">
+                            <label class="text-[10px] text-slate-400 font-bold">Experience Level</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl p-2.5 outline-none">
+                                <option>Entry-level / Intern</option>
+                                <option>Mid-level</option>
+                            </select>
                         </div>
                     </div>
+
+                    <!-- Platform pills from mockup -->
+                    <div class="border-t border-slate-100 pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div id="job-source-filters" class="flex flex-wrap gap-2">
+                            <button onclick="filterJobs('all')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-indigo-600 text-white border-indigo-600 shadow-sm">全部綜合來源</button>
+                            <button onclick="filterJobs('104')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300 shadow-sm">104人力銀行</button>
+                            <button onclick="filterJobs('linkedin')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300 shadow-sm">LinkedIn</button>
+                            <button onclick="filterJobs('yzu')" class="job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200 hover:border-slate-300 shadow-sm">元智特約實習與校園徵才</button>
+                        </div>
+                        <div class="text-[11px] font-black text-slate-400">
+                            128 opportunities found <span class="ml-2 text-indigo-600">✓ Results are personalized for you</span>
+                        </div>
+                    </div>
+
+                    <!-- Tech filter list -->
+                    <div class="border-t border-slate-100 pt-3 space-y-1.5">
+                        <label class="text-[11px] text-slate-400 font-black block">依工作技術要求過濾 (Tag Filter):</label>
+                        <div id="job-tech-tags" class="flex flex-wrap gap-2"></div>
+                    </div>
                 </div>
 
+                <!-- Job Opportunities Cards Box matching mockup card exactly -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
                     <div id="jobs-cards-box" class="space-y-4"></div>
                 </div>
@@ -255,154 +561,239 @@
         </main>
     </div>
 
-    <div id="modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 id="modal-title" class="text-sm font-black text-slate-900">詳細資訊</h3>
-                <button onclick="closeModal()" class="p-1.5 rounded-full hover:bg-slate-200 text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
-            </div>
-            <div id="modal-body" class="p-6 max-h-[65vh] overflow-y-auto text-xs font-semibold text-slate-600 leading-relaxed space-y-4"></div>
-            <div class="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50">
-                <button onclick="closeModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black shadow-md">確認</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Script Block containing logical interactions and mock databases -->
     <script>
         let activeTab = "assessment";
         let selectedInterests = ["tech", "data", "cyber"];
         let targetJob = "Security Engineer";
-        let networkTab = "team";
-        let searchSkills = [];
+        let isMobileSidebarOpen = false;
         let currentJobSourceFilter = 'all';
         let currentJobTechTag = null;
+        let activeTeamSkills = ["UI/UX Design", "Information Security"];
         
         let mainRadarInstance = null;
         let topRadarInstance = null;
 
-        // 固定核心修課歷史紀錄 (100分制)
-        const KEVIN_CAPABILITIES = { Programming: 90, "Data Analysis": 80, "Domain Knowledge": 75, "Problem Solving": 88, Communication: 70, "System Design": 65 };
-        const KEVIN_COURSES = [
-            { name: "Programming 程式設計基礎", score: "95分", credits: 3, status: "strong" },
-            { name: "Data & Analytics 資料結構與分析", score: "92分", credits: 3, status: "strong" },
-            { name: "Database System 資料庫系統實務", score: "88分", credits: 3, status: "strong" },
-            { name: "Algorithms 演算法與複雜度專題", score: "82分", credits: 3, status: "normal" },
-            { name: "System Analysis & Design 系統分析與設計", score: "74分", credits: 3, status: "normal" },
-            { name: "Computer Networks 網際網路概論", score: "68分", credits: 3, status: "weak" }
+        // YZU IM Academic Capability indicators
+        const KEVIN_CAPABILITIES = { Programming: 95, "Data Analysis": 92, "Domain Knowledge": 75, "Problem Solving": 88, Communication: 70, "System Design": 74 };
+        
+        // Full Real YZU IM Registry Database
+        const KEVIN_YZU_COURSES = [
+            { id: "IM101", name: "程式設計基礎 (Programming Fundamentals)", score: "95分", credits: 3, semester: "111-1", status: "strong" },
+            { id: "IM204", name: "資料結構與分析 (Data Structures)", score: "92分", credits: 3, semester: "111-2", status: "strong" },
+            { id: "IM303", name: "資料庫系統實務 (Database Systems)", score: "88分", credits: 3, semester: "112-1", status: "strong" },
+            { id: "IM301", name: "演算法與複雜度專題 (Algorithms)", score: "82分", credits: 3, semester: "112-2", status: "normal" },
+            { id: "IM307", name: "系統分析與設計 (System Analysis & Design)", score: "74分", credits: 3, semester: "113-1", status: "normal" },
+            { id: "IM308", name: "網際網路概論 (Computer Networks)", score: "68分", credits: 3, semester: "113-2", status: "weak" },
+            { id: "IM405", name: "大數據資料分析與實務 (Big Data Practice)", score: "94分", credits: 3, semester: "114-1", status: "strong" },
+            { id: "IM332", name: "金融科技與區塊鏈 (FinTech BlockChain)", score: "90分", credits: 2, semester: "114-1", status: "strong" }
         ];
 
+        // Grouped Completed course counts mimicking image Step 2
+        const KEVIN_COMPLETED_SUMMARY = [
+            { category: "Programming (程式開發)", count: 6, color: "bg-indigo-600" },
+            { category: "Data & Analytics (數據結構)", count: 5, color: "bg-blue-500" },
+            { category: "Database (資料庫)", count: 3, color: "bg-emerald-500" },
+            { category: "Algorithms (演算法)", count: 3, color: "bg-yellow-500" },
+            { category: "System Design (系統設計)", count: 2, color: "bg-rose-500" },
+            { category: "Others (通識與選修)", count: 4, color: "bg-slate-400" }
+        ];
+
+        // Team candidates matching Skill Network.jpg layout
         const STUDENTS_MOCK = [
-            { id: 1, name: "Sophie Chen", dept: "資訊管理學系", year: "大三", skills: ["UI/UX Design", "Figma", "React"], avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" },
-            { id: 2, name: "Allen Lin", dept: "資訊管理學系", year: "大二", skills: ["Information Security", "Python", "Linux"], avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" },
-            { id: 3, name: "Jessica Wang", dept: "資訊工程學系", year: "大三", skills: ["UI Prototype", "HTML/CSS", "Vue.js"], avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" },
-            { id: 4, name: "Alpha Huang", dept: "資訊工程學系", year: "大四", skills: ["Information Security", "C++", "Penetration Testing"], avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" }
+            { id: 1, name: "Sophie Chen", dept: "資訊管理學系", year: "大三", skills: ["UI/UX Design", "Figma", "React", "JavaScript"], avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80", avail: "Available: Weekends, Evenings" },
+            { id: 2, name: "Allen Lin", dept: "資訊管理學系", year: "大二", skills: ["Information Security", "Network Security", "Python", "Linux"], avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80", avail: "Available: Evenings" },
+            { id: 3, name: "Jessica Wang", dept: "資訊工程學系", year: "大三", skills: ["UI Prototype", "HTML/CSS", "Vue.js", "UI/UX Design"], avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80", avail: "Available: Weekends" },
+            { id: 4, name: "Kevin Huang", dept: "資訊管理學系", year: "大三", skills: ["Information Security", "Web Security", "Penetration Testing", "C++"], avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80", avail: "Available: Evenings, Weekends" }
         ];
 
-        const ALUMNI_MOCK = [
-            { id: 1, name: "Chris Lee", role: "軟體開發工程師", company: "Microsoft", dept: "資訊管理學系", tags: ["Backend", "Cloud", "Java"], avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80" },
-            { id: 2, name: "Vivian Chen", role: "產品設計師", company: "Google", dept: "資訊管理學系", tags: ["UI/UX", "Figma", "Design System"], avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" },
-            { id: 3, name: "Kevin Tsai", role: "資安研發工程師", company: "Trend Micro", dept: "資訊管理學系", tags: ["Information Security", "Linux", "C++"], avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80" },
-            { id: 4, name: "Amanda Lin", role: "數據分析師", company: "Amazon", dept: "資訊工程學系", tags: ["Data Analysis", "SQL", "Python"], avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" }
+        // Academic Professors & Alumni Mentors
+        const MENTORS_MOCK = [
+            { id: 1, name: "林教授", role: "元智大學資管系 專任教授 / 專題指導老師", company: "元智大學彥公廳資訊研究室", tags: ["Faculty", "AI & Data Mining", "NLP"], avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80" },
+            { id: 2, name: "張副教授", role: "元智大學資管系 副教授 / 實驗室主持人", company: "元智大學五館網路安全實驗室", tags: ["Faculty", "Information Security", "Cryptography"], avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" },
+            { id: 3, name: "Chris Lee", role: "Software Engineer @ Microsoft", company: "台灣微軟總部 (YZU 資管校友 2019)", tags: ["Alumni", "Backend Development", "Cloud Computing", "System Design"], avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80" },
+            { id: 4, name: "Vivian Chen", role: "Product Designer @ Google", company: "Google 亞太設計中心 (YZU 資管校友 2018)", tags: ["Alumni", "UI/UX Design", "Design System", "Figma"], avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" },
+            { id: 5, name: "Kevin Tsai", role: "Information Security Engineer @ Trend Micro", company: "趨勢科技資安防衛部 (YZU 資安研發 2017)", tags: ["Alumni", "Information Security", "Penetration Testing", "Web Security"], avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=150&q=80" },
+            { id: 6, name: "Amanda Lin", role: "Data Analyst @ Amazon", company: "亞馬遜AWS雲端大數據部門 (YZU 資工校友 2020)", tags: ["Alumni", "Data Analysis", "SQL", "Python", "BI"], avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" }
         ];
 
+        // Detailed career database & advice
+        const CAREERS_DATABASE = {
+            "Data Scientist": {
+                name: "Data Scientist (數據科學家)",
+                match: 94,
+                desc: "融合你在元智資管所學的資料科學能力，在 Python 與核心大數據修課指標（94分）中表現優異。此職位主要負責數據建模、特徵工程與機器學習系統對接。",
+                adv: "建議繼續保持你的大數據核心科系選修優勢，並前往補強 Microsoft Certified: Power BI 證照。"
+            },
+            "Machine Learning Engineer": {
+                name: "Machine Learning Engineer (機器學習工程師)",
+                match: 91,
+                desc: "偏重演算法模型研發。你的演算法核心學分 A+ 及大數據資料庫指標高度配合此職務的要求。",
+                adv: "建議多參加元智創客基地的 LLM 生成式 AI 大模型黑客松，強化實作履歷。"
+            },
+            "Security Engineer": {
+                name: "Security Engineer (資訊安全工程師)",
+                match: 89,
+                desc: "涉及企業主動式防禦。雖然你有高強度的程式底子與 Database 優勢，但需補足網際網路概論（68分）偏弱的斷層。",
+                adv: "建議在下一學期修習 YZU 資管系 IM446 資訊安全管理，同時報考 CompTIA Security+ 國際認證以彌補落差。"
+            },
+            "Software Engineer": {
+                name: "Software Engineer (軟體開發工程師)",
+                match: 86,
+                desc: "典型的系統設計與邏輯開發核心。你的 Programming A+（95分）基本功在學術交叉比對中位居全系前3%，唯受限於系統分析設計（74分）偏弱。",
+                adv: "推薦優先研讀物件導向設計模式 (Design Patterns)，並報考 AWS 解決方案架構師認證。"
+            },
+            "FinTech Consultant": {
+                name: "FinTech Consultant (金融科技顧問)",
+                match: 82,
+                desc: "結合金融常識與軟體技術。分析模型偵測到你對金融市場有跨域修課紀錄（IM332 金融科技 A 等級）。",
+                adv: "建議結合資管資料分析強項，投遞各大金控大專實兵量化分析實習 vacancies。"
+            }
+        };
+
+        // YZU Job vacancies data with complete tags and details matching Job Opportunities.jpg
         const JOBS_MOCK = [
-            { id: 1, title: "Backend Developer Intern", company: "Microsoft", logo: "Ⓜ️", loc: "台北, Taiwan", mode: "Hybrid", source: "yzu", match: 94, tags: ["Python", "SQL"], description: "微軟特約全端/後端實習生。因你的 程式設計 達 90% 且擁有 95分 學科成績，與此職缺高度適配。" },
-            { id: 2, title: "Data Analyst Intern", company: "Deloitte", logo: "🟢", loc: "台北, Taiwan", mode: "Hybrid", source: "yzu", match: 85, tags: ["Data Analysis", "SQL"], description: "商業數據分析實習。與你的 資料結構與分析 成績(92分)高度相符。" },
-            { id: 3, title: "IT Security Analyst (Entry Level)", company: "Wistron", logo: "🌐", loc: "新竹, Taiwan", mode: "On-site", source: "104", match: 72, tags: ["Information Security"], description: "資安設備防禦工程師。注意：由於你的 網際網路概論 成績較弱(68分)，建議優先補強相關證照。" },
-            { id: 4, title: "Software Engineer (Entry Level)", company: "ASUS", logo: "💻", loc: "台北, Taiwan", mode: "On-site", source: "104", match: 68, tags: ["C++", "System Design"], description: "系統韌體工程師。注意：你的 系統分析與設計 指標分數較低(74分)，匹配度受到部分限制。"}
+            { id: 1, title: "Backend Developer Intern", company: "Microsoft", logo: "Ⓜ️", loc: "台北, Taiwan", mode: "Hybrid", source: "yzu", type: "Internship", match: 92, tags: ["Backend Development", "Python", "REST API", "SQL"], description: "台灣微軟全端/後端實習生專案。因你的 YZU 程式設計（95分）與資料庫（88分）成績，系統評等為高度適配。" },
+            { id: 2, title: "Software Engineer (Entry Level)", company: "ASUS", logo: "💻", loc: "台北, Taiwan", mode: "On-site", source: "104", type: "Full-time", match: 87, tags: ["C++", "Data Structures", "OOP", "Linux"], description: "華碩電腦系統軟體開發工程師。主要負責驅動與核心系統維護。你的資料結構核心成績極佳（92分）。" },
+            { id: 3, title: "IT Security Analyst (Entry Level)", company: "Wistron", logo: "🌐", loc: "新竹, Taiwan", mode: "On-site", source: "104", type: "Full-time", match: 85, tags: ["Information Security", "Network Security", "SIEM", "Firewall"], description: "緯創資通資安防衛監控中心工程師。主要負責防火牆規則制定、入侵事件監控。建議修習校內資安必選修作為補強。" },
+            { id: 4, title: "Data Analyst Intern", company: "Deloitte", logo: "🟢", loc: "台北, Taiwan", mode: "Hybrid", source: "yzu", type: "Internship", match: 82, tags: ["SQL", "Python", "Data Analysis", "Excel"], description: "勤業眾信商業智慧分析實習。主要負責客戶數據清洗、視覺化儀表板製作，高度切合資管科系出路。" },
+            { id: 5, title: "Backend Engineer (Entry Level)", company: "91APP", logo: "🚀", loc: "台北, Taiwan", mode: "On-site", source: "linkedin", type: "Full-time", match: 78, tags: ["Java", "Spring Boot", "MySQL", "REST API"], description: "零售新零售龍頭 91APP 後端開發。系統分析：你的系統分析與設計分數（74分）略微扣分，但程式基礎仍足以勝任。" }
         ];
 
-        // 豐富完整的學習落差推薦資料庫 (包含各職位 3-4 項精準推薦項目)
+        // Core Learning Recommendation database
         const RECS_DATABASE = {
             "Security Engineer": {
                 courses: [
-                    { title: "網路安全基礎與實務 (Network Security)", match: 95, platform: "Coursera", level: "初階", hours: 12 },
-                    { title: "道德駭客與防禦實兵演練 (Ethical Hacking)", match: 90, platform: "Udemy", level: "中階", hours: 18 },
-                    { title: "AWS 雲端資安與安全架構實務", match: 88, platform: "AWS Training", level: "中階", hours: 15 },
-                    { title: "Linux 系統管理與入侵偵測技術", match: 83, platform: "Coursera", level: "初階", hours: 10 }
+                    { title: "Network Security Fundamentals", platform: "Coursera", level: "Beginner", hours: "12 Hours", match: 95 },
+                    { title: "Ethical Hacking Essentials", platform: "Udemy", level: "Intermediate", hours: "18 Hours", match: 90 },
+                    { title: "Cloud Security on AWS", platform: "AWS Training", level: "Intermediate", hours: "15 Hours", match: 88 },
+                    { title: "SIEM with Splunk Basics", platform: "Coursera", level: "Intermediate", hours: "10 Hours", match: 85 }
                 ],
                 certifications: [
-                    { title: "CompTIA Security+", organization: "CompTIA", level: "初階", color: "text-red-700 bg-red-50 border-red-200" },
-                    { title: "CEH (Certified Ethical Hacker)", organization: "EC-Council", level: "中階", color: "text-amber-700 bg-amber-50 border-amber-200" },
-                    { title: "AWS Certified Security - Specialty", organization: "Amazon", level: "中階", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-                    { title: "CISSP 頂級資安專業經理人認證", organization: "(ISC)²", level: "高階", color: "text-indigo-700 bg-indigo-50 border-indigo-200" }
+                    { title: "CompTIA Security+", organization: "CompTIA", level: "Beginner", color: "text-emerald-700 bg-emerald-50 border-emerald-200", match: 92 },
+                    { title: "CEH (Certified Ethical Hacker)", organization: "EC-Council", level: "Intermediate", color: "text-amber-700 bg-amber-50 border-amber-200", match: 88 },
+                    { title: "AWS Certified Security - Specialty", organization: "Amazon", level: "Intermediate", color: "text-indigo-700 bg-indigo-50 border-indigo-200", match: 86 },
+                    { title: "CISSP", organization: "(ISC)²", level: "Advanced", color: "text-rose-700 bg-rose-50 border-rose-200", match: 82 }
                 ],
                 activities: [
-                    { title: "企業網路攻防實戰工作坊", date: "5月 28", loc: "元智五館 502" },
-                    { title: "資安校友職涯沙龍：前進資安大廠", date: "6月 04", loc: "元智彥公廳" },
-                    { title: "YZU CTF 校園攻防爭霸賽", date: "6月 12", loc: "資管專業實驗室" },
-                    { title: "資訊科技履歷檢診與面試模擬", date: "6月 20", loc: "元智三館 301" }
+                    { title: "Cybersecurity Workshop", date: "MAY 28", loc: "Hands-on network security training / Room 502" },
+                    { title: "Career Talk: InfoSec in Industry", date: "JUN 04", loc: "Alumni sharing real-world experience / Auditorium" },
+                    { title: "CTF Challenge", date: "JUN 12", loc: "Capture The Flag competition / CS Lab" },
+                    { title: "Resume Building Workshop", date: "JUN 20", loc: "Build a standout tech resume / Room 301" }
                 ]
             },
             "Data Scientist": {
                 courses: [
-                    { title: "Python 資料科學特訓 (Python for DS)", match: 96, platform: "Coursera", level: "中階", hours: 24 },
-                    { title: "深度學習與神經網路 (Deep Learning)", match: 93, platform: "DeepLearning.AI", level: "高階", hours: 40 },
-                    { title: "商業數據分析與 SQL 語法大師課", match: 89, platform: "Udacity", level: "初階", hours: 8 },
-                    { title: "R 語言與多變量統計建模實務", match: 84, platform: "edX", level: "中階", hours: 14 }
+                    { title: "IM405 大數據資料分析與實務 (YZU)", platform: "元智大學核心課", level: "進階學群", hours: "3學分", match: 96 },
+                    { title: "Python for Data Science", platform: "Coursera", level: "Intermediate", hours: "20 Hours", match: 94 },
+                    { title: "Applied Machine Learning Systems", platform: "edX", level: "Advanced", hours: "35 Hours", match: 91 },
+                    { title: "SQL for Big Data Analysts", platform: "Udacity", level: "Intermediate", hours: "12 Hours", match: 88 }
                 ],
                 certifications: [
-                    { title: "Google Cloud Professional Data Engineer", organization: "Google Cloud", level: "高階", color: "text-blue-700 bg-blue-50 border-blue-200" },
-                    { title: "IBM Data Science Professional Certificate", organization: "IBM", level: "初階", color: "text-indigo-700 bg-indigo-50 border-indigo-200" },
-                    { title: "Microsoft Certified: Power BI Analyst", organization: "Microsoft", level: "中階", color: "text-yellow-700 bg-yellow-50 border-yellow-200" }
+                    { title: "Google Cloud Professional Data Engineer", organization: "Google Cloud", level: "Advanced", color: "text-rose-700 bg-rose-50 border-rose-200", match: 90 },
+                    { title: "IBM Data Science Certificate", organization: "IBM", level: "Beginner", color: "text-emerald-700 bg-emerald-50 border-emerald-200", match: 88 },
+                    { title: "SAS Certified Predictive Modeler", organization: "SAS Institute", level: "Intermediate", color: "text-amber-700 bg-amber-50 border-amber-200", match: 85 }
                 ],
                 activities: [
-                    { title: "生成式 AI 應用與大模型黑客松", date: "5月 30", loc: "元智創客基地" },
-                    { title: "大數據與 LLM 產業發展前沿論壇", date: "6月 08", loc: "元智音樂廳" },
-                    { title: "資料探勘演算法與商業智慧實體沙龍", date: "6月 18", loc: "元智彥公廳" }
+                    { title: "YZU Big Data Hackathon", date: "MAY 30", loc: "大數據校園極客松 / 元智創客基地" },
+                    { title: "LLM Generative AI Demo Day", date: "JUN 15", loc: "生成式人工智慧成果發表 / 彥公廳" }
                 ]
             },
             "Software Engineer": {
                 courses: [
-                    { title: "現代全端網路應用程式開發實務", match: 94, platform: "Coursera", level: "中階", hours: 32 },
-                    { title: "大規模高併發分散式系統架構 (System Design)", match: 91, platform: "Educative", level: "高階", hours: 15 },
-                    { title: "高階資料結構與精實演算法特訓", match: 88, platform: "LeetCode", level: "中階", hours: 20 },
-                    { title: "物件導向程式設計設計模式 (Design Patterns)", match: 84, platform: "Coursera", level: "中階", hours: 16 }
+                    { title: "IM204 資料結構與分析 (YZU)", platform: "元智大學核心課", level: "必修課", hours: "3學分", match: 97 },
+                    { title: "IM307 系統分析與設計 (YZU)", platform: "元智大學核心課", level: "必修課", hours: "3學分", match: 92 },
+                    { title: "Advanced System Design Models", platform: "Educative", level: "Advanced", hours: "18 Hours", match: 89 },
+                    { title: "Clean Code & Refactoring Practice", platform: "Udemy", level: "Intermediate", hours: "14 Hours", match: 85 }
                 ],
                 certifications: [
-                    { title: "AWS Certified Solutions Architect", organization: "Amazon", level: "中階", color: "text-orange-700 bg-orange-50 border-orange-200" },
-                    { title: "Oracle Certified Professional: Java Developer", organization: "Oracle", level: "高階", color: "text-red-700 bg-red-50 border-red-200" },
-                    { title: "Google Associate Cloud Engineer", organization: "Google Cloud", level: "中階", color: "text-blue-700 bg-blue-50 border-blue-200" }
+                    { title: "AWS Certified Solutions Architect", organization: "Amazon", level: "Intermediate", color: "text-indigo-700 bg-indigo-50 border-indigo-200", match: 91 },
+                    { title: "Oracle Certified Java Professional", organization: "Oracle", level: "Advanced", color: "text-rose-700 bg-rose-50 border-rose-200", match: 87 }
                 ],
                 activities: [
-                    { title: "開源貢獻新手日：Git 與 PR 實戰", date: "5月 25", loc: "元智三館 403" },
-                    { title: "ASUS 華碩校園大專兵實習徵才說明會", date: "6月 15", loc: "元智活動中心 1F" },
-                    { title: "後端架構演進與微服務部署分享研討會", date: "6月 22", loc: "元智五館 103" }
+                    { title: "ASUS 校園徵才實習說明會", date: "JUN 02", loc: "暑期大專兵招募計劃 / 元智活動中心" },
+                    { title: "Git & GitHub Collaborative Training", date: "JUN 18", loc: "團隊開發協同實務 / 五館電腦教室" }
+                ]
+            },
+            "FinTech Consultant": {
+                courses: [
+                    { title: "IM332 金融科技與區塊鏈 (YZU)", platform: "元智大學實體課", level: "進階學程", hours: "2學分", match: 95 },
+                    { title: "Financial Markets Masters", platform: "Yale / Coursera", level: "Intermediate", hours: "24 Hours", match: 88 }
+                ],
+                certifications: [
+                    { title: "FRM (Financial Risk Manager)", organization: "GARP", level: "Advanced", color: "text-rose-700 bg-rose-50 border-rose-200", match: 84 }
+                ],
+                activities: [
+                    { title: "E.SUN Bank 金融科技沙龍", date: "JUN 08", loc: "玉山金控量化人才招募 / 彥公廳" }
+                ]
+            },
+            "UI/UX Designer": {
+                courses: [
+                    { title: "IM345 人機介面與使用者體驗 (YZU)", platform: "元智大學專業選修", level: "選修課", hours: "3學分", match: 95 },
+                    { title: "Google UX Design Masters", platform: "Google / Coursera", level: "Beginner", hours: "40 Hours", match: 92 }
+                ],
+                certifications: [
+                    { title: "Google UX Design Certificate", organization: "Google", level: "Beginner", color: "text-emerald-700 bg-emerald-50 border-emerald-200", match: 90 }
+                ],
+                activities: [
+                    { title: "Figma UI/UX Workshop", date: "JUN 10", loc: "設計系統協作實務 / 元智創客基地" }
                 ]
             }
+        };
+
+        const INTEREST_CARDS_MOCK = [
+            { id: 'tech', label: 'Technology & IT', icon: '💻', desc: 'Programming, Software & Cloud Systems' },
+            { id: 'data', label: 'Data Science & AI', icon: '🧠', desc: 'Machine Learning, Statistics & BI' },
+            { id: 'cyber', label: 'Cybersecurity', icon: '🛡️', desc: 'Defensive Ops, Network & Cryptography' },
+            { id: 'business', label: 'Business & Management', icon: '💼', desc: 'Project Management & IT Audit' },
+            { id: 'design', label: 'Design & Creative', icon: '🎨', desc: 'UI/UX, Prototypes & Multimedia' },
+            { id: 'finance', label: 'Finance & Economics', icon: '📈', desc: 'FinTech, Trading & Risk Management' }
+        ];
+
+        const NETWORK_TAGS_PRESETS = {
+            team: ["UI/UX Design", "Information Security", "React", "Python", "Vue.js", "JavaScript"],
+            mentors: ["Faculty", "Alumni", "AI & Data Mining", "Information Security", "Backend Development", "UI/UX Design", "FinTech"]
         };
 
         window.onload = function() {
             lucide.createIcons();
             initInterestCards();
             switchTab('assessment');
+            populateCourseHistoryDrawer();
         };
 
-        // 初始化興趣核取方塊
-        const INTEREST_MOCK_DATA = [
-            { id: 'tech', label: 'Technology & IT', icon: '💻', category: 'Programming' },
-            { id: 'data', label: 'Data Science & AI', icon: '🧠', category: 'Data Analysis' },
-            { id: 'cyber', label: 'Cybersecurity', icon: '🛡️', category: 'System Design' },
-            { id: 'business', label: 'Business & Management', icon: '💼', category: 'Domain Knowledge' },
-            { id: 'design', label: 'Design & Creative', icon: '🎨', category: 'Communication' },
-            { id: 'finance', label: 'Finance & Economics', icon: '📈', category: 'Problem Solving' }
-        ];
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById("main-sidebar");
+            const backdrop = document.getElementById("sidebar-backdrop");
+            isMobileSidebarOpen = !isMobileSidebarOpen;
+            if (isMobileSidebarOpen) {
+                sidebar.classList.remove("-translate-x-full");
+                backdrop.classList.remove("hidden");
+            } else {
+                sidebar.classList.add("-translate-x-full");
+                backdrop.classList.add("hidden");
+            }
+        }
+
+        function showMockDashboardNotice() {
+            openModal("Dashboard 整合測試提示", `<p class="leading-relaxed">本原型主要演示 YZU 元智大學 **Career Assessment**, **Learning & Certification**, **Skill & Mentorship Network**, 以及 **Job Opportunities** 四大核心系統。本區塊（個人檔案 / 聊天室 / 設定）僅提供視覺引導展示，暫無真實資料連動。</p>`);
+        }
 
         function initInterestCards() {
             const grid = document.getElementById("interest-cards-grid");
-            grid.innerHTML = INTEREST_MOCK_DATA.map(opt => {
+            grid.innerHTML = INTEREST_CARDS_MOCK.map(opt => {
                 const isChecked = selectedInterests.includes(opt.id);
                 return `
-                    <div onclick="toggleInterest('${opt.id}')" class="p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between bg-white shadow-sm ${isChecked ? 'border-indigo-600 bg-indigo-50/10' : 'border-slate-200/60 hover:border-slate-300'}">
+                    <div onclick="toggleInterest('${opt.id}')" class="p-4 rounded-3xl border transition-all cursor-pointer flex items-center justify-between bg-white ${isChecked ? 'border-indigo-600 bg-indigo-50/10 ring-2 ring-indigo-500/20' : 'border-slate-150 hover:border-slate-300 hover:shadow-sm'} duration-300">
                         <div class="flex items-center gap-3">
-                            <span class="text-xl">${opt.icon}</span>
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg bg-slate-50 border border-slate-100 shadow-sm">${opt.icon}</div>
                             <div>
                                 <p class="font-black text-xs text-slate-800 tracking-tight">${opt.label}</p>
-                                <p class="text-[9px] text-slate-400 font-bold">學術指標: ${opt.category}</p>
+                                <p class="text-[9px] text-slate-400 font-bold leading-tight mt-0.5">${opt.desc}</p>
                             </div>
                         </div>
-                        <div class="w-4 h-4 rounded-full flex items-center justify-center border ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}">
-                            ${isChecked ? '<i data-lucide="check" class="w-3 h-3 text-white"></i>' : ''}
+                        <div class="w-5 h-5 rounded-full flex items-center justify-center border ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'border-slate-200'}">
+                            ${isChecked ? '<i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>' : ''}
                         </div>
                     </div>
                 `;
@@ -412,270 +803,428 @@
 
         function toggleInterest(id) {
             if (selectedInterests.includes(id)) {
-                if (selectedInterests.length > 1) selectedInterests = selectedInterests.filter(i => i !== id);
+                if (selectedInterests.length > 1) {
+                    selectedInterests = selectedInterests.filter(i => i !== id);
+                }
             } else {
-                if (selectedInterests.length < 5) selectedInterests.push(id);
+                if (selectedInterests.length < 5) {
+                    selectedInterests.push(id);
+                }
             }
             initInterestCards();
         }
 
-        // 模擬智慧交叉分析計算
+        function populateCourseHistoryDrawer() {
+            const container = document.getElementById("course-history-drawer");
+            container.innerHTML = KEVIN_YZU_COURSES.map(c => {
+                let statusBadge = `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black">強</span>`;
+                if (c.status === 'weak') statusBadge = `<span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-black">弱</span>`;
+                if (c.status === 'normal') statusBadge = `<span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-black">中</span>`;
+                return `
+                    <div class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-100 shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-black text-[9px]">${c.id}</span>
+                            <span>${c.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-slate-400 text-[10px] font-medium">${c.semester} | ${c.credits}學分</span>
+                            <span class="text-slate-800 font-black">${c.score}</span>
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCourseHistoryDrawer() {
+            const drawer = document.getElementById("course-history-drawer");
+            const icon = document.getElementById("drawer-chevron");
+            if (drawer.classList.contains("hidden")) {
+                drawer.classList.remove("hidden");
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                drawer.classList.add("hidden");
+                icon.style.transform = "rotate(0deg)";
+            }
+        }
+
         function triggerCareerAnalysis() {
             document.getElementById("career-analysis-placeholder").classList.add("hidden");
             const matchBox = document.getElementById("career-match-list");
             matchBox.classList.remove("hidden");
 
-            const results = [
-                { name: "Data Scientist (數據科學家)", match: 94, desc: "高度匹配：符合你 Programming (90分) 與資料結構分析 (92分) 的優勢學術指標。" },
-                { name: "Machine Learning Engineer (機器學習工程師)", match: 91, desc: "高度匹配：符合你演算法專題與大數據分析學分的高分專長。" },
-                { name: "Cybersecurity Analyst (資安分析師)", match: 89, desc: "中高匹配：符合資安興趣，但注意網際網路概論修課成績較弱(68分)。" },
-                { name: "Software Engineer (軟體開發師)", match: 86, desc: "中度匹配：程式基礎極佳，但受限於系統分析設計分數較弱(74分)。" },
-                { name: "Financial Consultant (財務顧問)", match: 45, desc: "低度匹配：與你目前資管之核心學科修課權重不合，缺乏財金領域學分。" },
-                { name: "UI/UX Designer (視覺設計師)", match: 38, desc: "低度匹配：人機互動與多媒體元件設計修課分數歷史紀錄不足。" }
+            const pool = [
+                { id: "Data Scientist", label: "Data Scientist (數據科學家)", baseMatch: 92, cond: "data" },
+                { id: "Machine Learning Engineer", label: "Machine Learning Engineer (機器學習)", baseMatch: 89, cond: "data" },
+                { id: "Security Engineer", label: "Security Engineer (資安分析與防禦)", baseMatch: 85, cond: "cyber" },
+                { id: "Software Engineer", label: "Software Engineer (全端開發工程師)", baseMatch: 86, cond: "tech" },
+                { id: "FinTech Consultant", label: "FinTech Consultant (金融科技顧問)", baseMatch: 80, cond: "finance" },
+                { id: "UI/UX Designer", label: "UI/UX Designer (產品設計師)", baseMatch: 78, cond: "design" }
             ];
 
-            matchBox.innerHTML = results.map(item => {
-                const isLow = item.match < 50;
+            const sorted = pool.map(item => {
+                let finalMatch = item.baseMatch;
+                if (selectedInterests.includes(item.cond)) {
+                    finalMatch += 6;
+                } else {
+                    finalMatch -= 20;
+                }
+                finalMatch = Math.max(35, Math.min(finalMatch, 97));
+                return { ...item, match: finalMatch };
+            }).sort((a,b) => b.match - a.match);
+
+            matchBox.innerHTML = sorted.map(item => {
+                const isLow = item.match < 65;
+                const dbEntry = CAREERS_DATABASE[item.id] || { desc: "YZU 智慧推薦項目" };
                 return `
-                    <div class="p-3.5 rounded-2xl border flex flex-col gap-1.5 ${isLow ? 'bg-rose-50/30 border-rose-100' : 'bg-slate-50/60 border-slate-100'}">
+                    <div class="p-3.5 rounded-2xl border transition-all hover:translate-x-1 ${isLow ? 'bg-rose-50/20 border-rose-100' : 'bg-slate-50/50 border-slate-100'} cursor-pointer" onclick="openCareerDetailModal('${item.id}', ${item.match})">
                         <div class="flex items-center justify-between">
-                            <span class="font-black text-xs text-slate-800">${item.name}</span>
-                            <span class="text-[10px] font-black ${isLow ? 'text-rose-600' : 'text-emerald-600'}">${item.match}% Match</span>
+                            <span class="font-black text-xs text-slate-800">${item.label}</span>
+                            <span class="text-[10px] font-black ${isLow ? 'text-rose-600' : 'text-emerald-600'}">${item.match}% Match ➔</span>
                         </div>
-                        <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                        <div class="w-full h-1.5 bg-slate-200/80 rounded-full overflow-hidden mt-1.5">
                             <div class="h-full ${isLow ? 'bg-rose-400' : 'bg-emerald-500'}" style="width: ${item.match}%"></div>
                         </div>
-                        <p class="text-[10px] text-slate-400 font-bold leading-normal mt-0.5">${item.desc}</p>
+                        <p class="text-[10px] text-slate-400 font-bold leading-normal mt-1.5 truncate">${dbEntry.desc}</p>
                     </div>
                 `;
             }).join('');
         }
 
-        // 渲染能力雷達圖與成績清單
-        function renderCapabilitiesAndCharts() {
-            document.getElementById("course-summary-list").innerHTML = KEVIN_COURSES.map(c => {
-                let badgeColor = "bg-slate-100 text-slate-700";
-                if (c.status === 'strong') badgeColor = "bg-emerald-50 text-emerald-700 border border-emerald-200";
-                if (c.status === 'weak') badgeColor = "bg-rose-50 text-rose-700 border border-rose-200";
-                return `
-                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-                        <span>${c.name}</span>
-                        <span class="px-2 py-0.5 rounded font-black text-[10px] ${badgeColor}">評分: ${c.score}</span>
+        // Click career jump connection logic
+        function openCareerDetailModal(careerId, matchPercent) {
+            const data = CAREERS_DATABASE[careerId];
+            if (!data) return;
+
+            let targetDropdownValue = "Security Engineer";
+            if (careerId === "Data Scientist" || careerId === "Machine Learning Engineer") targetDropdownValue = "Data Scientist";
+            if (careerId === "Software Engineer") targetDropdownValue = "Software Engineer";
+            if (careerId === "FinTech Consultant") targetDropdownValue = "FinTech Consultant";
+            if (careerId === "UI/UX Designer") targetDropdownValue = "UI/UX Designer";
+
+            openModal(
+                `推薦職涯診斷: ${data.name}`,
+                `<div class="space-y-4">
+                    <div class="flex items-center justify-between bg-indigo-50 border border-indigo-100 p-4 rounded-2xl">
+                        <div>
+                            <p class="text-[10px] text-indigo-400 font-black uppercase">智慧分析媒合度</p>
+                            <p class="text-xl font-black text-indigo-700 mt-0.5">${matchPercent}% Match</p>
+                        </div>
+                        <i data-lucide="sparkles" class="w-8 h-8 text-yellow-500"></i>
                     </div>
-                `;
-            }).join('');
+                    <div class="space-y-2">
+                        <h5 class="font-black text-xs text-slate-800">● 診斷分析評語：</h5>
+                        <p class="text-xs text-slate-600 font-bold leading-relaxed">${data.desc}</p>
+                    </div>
+                    <div class="space-y-2 border-t border-slate-100 pt-3">
+                        <h5 class="font-black text-xs text-slate-800">● YZU 學習與證照落差補強建議：</h5>
+                        <p class="text-xs text-slate-600 font-bold leading-relaxed">${data.adv}</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100/50 p-3.5 rounded-2xl text-[11px] font-bold text-amber-800 leading-normal mt-2">
+                        💡 <strong>跨分頁連動：</strong>點選下方連動按鈕，系統將自動跳轉至 **Learning & Certification** 功能，為您動態篩選出與該職業對接的所有元智資管修課代碼、線上對應證照、以及本週最新校園活動！
+                    </div>
+                    <button onclick="interactiveTabJump('learning', '${targetDropdownValue}')" class="w-full mt-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-black shadow-md flex items-center justify-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i> 前往技能落差與課程診斷 (Go to Gap Analytics)
+                    </button>
+                </div>`
+            );
+            lucide.createIcons();
+        }
+
+        function interactiveTabJump(tabId, jobValue) {
+            closeModal();
+            switchTab(tabId);
+            const select = document.getElementById("target-job-select");
+            if (select) {
+                select.value = jobValue;
+                fetchLearningRecommendations();
+            }
+        }
+
+        function renderCapabilitiesAndCharts() {
+            // Render Completed Course Summary list matching Step 2 mockup
+            document.getElementById("course-summary-list").innerHTML = KEVIN_COMPLETED_SUMMARY.map(item => `
+                <div class="space-y-1">
+                    <div class="flex justify-between text-[11px] font-black text-slate-700">
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full ${item.color}"></span> ${item.category}</span>
+                        <span>${item.count} 門修課紀錄</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full ${item.color}" style="width: ${item.count * 15}%"></div>
+                    </div>
+                </div>
+            `).join('');
 
             const labels = ['Programming', 'Data Analysis', 'Domain Knowledge', 'Problem Solving', 'Communication', 'System Design'];
             const dataValues = labels.map(l => KEVIN_CAPABILITIES[l]);
             const averageValues = [75, 68, 70, 80, 75, 65];
 
-            // 1. 主能力圖
+            // 1. Core Radar
             const ctxMain = document.getElementById('radarChartCanvas');
-            if(ctxMain) {
+            if (ctxMain) {
                 if (mainRadarInstance) mainRadarInstance.destroy();
                 mainRadarInstance = new Chart(ctxMain.getContext('2d'), {
                     type: 'radar',
                     data: {
                         labels,
                         datasets: [
-                            { data: dataValues, backgroundColor: 'rgba(99, 102, 241, 0.25)', borderColor: '#4f46e5', borderWidth: 3.5, pointBackgroundColor: '#4f46e5', pointRadius: 4.5 },
-                            { data: averageValues, backgroundColor: 'transparent', borderColor: '#94a3b8', borderDash: [4, 4], borderWidth: 1.5, pointRadius: 0 }
+                            { label: 'Your Capability', data: dataValues, backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: '#4f46e5', borderWidth: 3, pointBackgroundColor: '#4f46e5', pointRadius: 4 },
+                            { label: 'Industry Average', data: averageValues, backgroundColor: 'transparent', borderColor: '#94a3b8', borderDash: [4, 4], borderWidth: 1.5, pointRadius: 0 }
                         ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 9, weight: 'bold' } } } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            r: { 
+                                min: 0, 
+                                max: 100, 
+                                ticks: { display: false }, 
+                                pointLabels: { font: { size: 9, weight: 'bold' } } 
+                            } 
+                        } 
+                    }
                 });
             }
 
-            // 2. 置頂防塵看版小圖
+            // 2. Reference Radar inside Jobs Section
             const ctxTop = document.getElementById('jobTopRadarCanvas');
-            if(ctxTop) {
+            if (ctxTop) {
                 if (topRadarInstance) topRadarInstance.destroy();
                 topRadarInstance = new Chart(ctxTop.getContext('2d'), {
                     type: 'radar',
                     data: {
                         labels,
-                        datasets: [{ data: dataValues, backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: '#4f46e5', borderWidth: 2.5, pointRadius: 2.5 }]
+                        datasets: [{ data: dataValues, backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: '#4f46e5', borderWidth: 2.5, pointRadius: 2 }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { min: 0, max: 100, ticks: { display: false }, pointLabels: { display: false } } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            r: { 
+                                min: 0, 
+                                max: 100, 
+                                ticks: { display: false }, 
+                                pointLabels: { font: { size: 8, weight: 'black' }, color: '#4338ca' } 
+                            } 
+                        } 
+                    }
                 });
             }
         }
 
-        // 學習與證照落差渲染 (多項目連動更新)
         function fetchLearningRecommendations() {
             targetJob = document.getElementById("target-job-select").value;
             const data = RECS_DATABASE[targetJob] || RECS_DATABASE["Security Engineer"];
             
             document.getElementById("recommended-courses-box").innerHTML = data.courses.map(c => `
-                <div class="p-3.5 border border-slate-100 rounded-2xl bg-slate-50/40 hover:bg-white transition-all space-y-1.5 text-left shadow-sm">
-                    <div class="flex justify-between font-black text-xs text-slate-800">
-                        <span>${c.title}</span><span class="text-indigo-600 font-extrabold text-[11px]">${c.match}% Match</span>
+                <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 hover:bg-white hover:shadow-sm hover:border-slate-200/60 transition-all flex items-start justify-between gap-4">
+                    <div class="space-y-1">
+                        <p class="font-black text-xs text-slate-800 leading-tight">${c.title}</p>
+                        <p class="text-[10px] text-slate-400 font-bold">${c.platform} • ${c.level} • ${c.hours}</p>
                     </div>
-                    <p class="text-[10px] text-slate-400 font-bold">${c.platform} • ${c.level} • ${c.hours}小時</p>
+                    <span class="text-emerald-600 font-black text-xs shrink-0">${c.match}% Match</span>
                 </div>
             `).join('');
 
             document.getElementById("recommended-certs-box").innerHTML = data.certifications.map(c => `
-                <div class="p-3.5 border border-slate-100 rounded-2xl bg-slate-50/40 hover:bg-white transition-all flex justify-between items-center text-left shadow-sm">
+                <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 hover:bg-white hover:shadow-sm hover:border-slate-200/60 transition-all flex justify-between items-center">
                     <div>
                         <p class="font-black text-xs text-slate-800 leading-tight">${c.title}</p>
-                        <p class="text-[10px] text-slate-400 font-bold mt-1">${c.organization}</p>
+                        <p class="text-[10px] text-slate-400 font-bold mt-0.5">${c.organization}</p>
                     </div>
-                    <span class="px-2 py-0.5 rounded font-black text-[9px] shrink-0 border ml-2 ${c.color}">${c.level}</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="px-2 py-0.5 rounded font-black text-[9px] border ${c.color}">${c.level}</span>
+                        <span class="text-emerald-600 font-black text-xs">${c.match}% Match</span>
+                    </div>
                 </div>
             `).join('');
 
             document.getElementById("recommended-activities-box").innerHTML = data.activities.map(act => `
-                <div class="p-3.5 border border-slate-100 rounded-2xl bg-slate-50/40 hover:bg-white transition-all flex gap-3 text-left shadow-sm">
-                    <div class="w-10 h-11 bg-indigo-50 border border-indigo-100 rounded-xl flex flex-col items-center justify-center font-black text-indigo-700 shrink-0 text-[10px]">
-                        <span>${act.date.split(' ')[0]}</span><span class="text-xs -mt-1">${act.date.split(' ')[1]}</span>
+                <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/50 hover:bg-white hover:shadow-sm hover:border-slate-200/60 transition-all flex gap-3.5">
+                    <div class="w-11 h-12 bg-indigo-50 border border-indigo-100 rounded-xl flex flex-col items-center justify-center font-black text-indigo-700 shrink-0 text-[10px]">
+                        <span>${act.date.split(' ')[0]}</span><span class="text-xs -mt-1 font-black">${act.date.split(' ')[1]}</span>
                     </div>
-                    <div class="overflow-hidden">
+                    <div class="overflow-hidden space-y-0.5 text-left">
                         <p class="font-black text-xs text-slate-800 truncate">${act.title}</p>
-                        <p class="text-[10px] text-indigo-600 font-extrabold mt-0.5">${act.loc}</p>
+                        <p class="text-[10px] text-slate-500 font-bold truncate">${act.loc}</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 社群與導師網路
-        const NETWORK_TAGS_PRESETS = {
-            team: ["UI/UX Design", "Information Security", "React", "Python", "Vue.js", "C++"],
-            mentors: ["Backend", "Cloud", "UI/UX", "Figma", "Information Security", "Data Analysis"]
-        };
-
-        function switchNetworkSubTab(sub) {
-            networkTab = sub;
-            document.getElementById("net-tab-team").className = sub === 'team' ? "px-5 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-md" : "px-5 py-2.5 rounded-xl text-xs font-black transition-all text-slate-500 hover:bg-slate-100";
-            document.getElementById("net-tab-mentors").className = sub === 'mentors' ? "px-5 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-md" : "px-5 py-2.5 rounded-xl text-xs font-black transition-all text-slate-500 hover:bg-slate-100";
-            searchSkills = [];
-            fetchNetworkData();
-        }
-
-        function toggleNetworkTag(tag) {
-            if (searchSkills.includes(tag)) searchSkills = searchSkills.filter(t => t !== tag);
-            else searchSkills.push(tag);
-            renderNetworkChips();
-            fetchNetworkData();
+        function toggleNetworkTag(tag, listType) {
+            if (listType === 'team') {
+                if (activeTeamSkills.includes(tag)) {
+                    activeTeamSkills = activeTeamSkills.filter(t => t !== tag);
+                } else {
+                    activeTeamSkills.push(tag);
+                }
+                renderNetworkChips();
+                fetchNetworkData();
+            } else {
+                openModal("導師/教授 篩選條件說明", `<p class="leading-relaxed">智慧系統目前依據您點選之標籤「${tag}」自動在業界校友與學校師資智囊團（Professors & Alumni）中進行智能定位與配對。此演示包含對話引導，您可以透過點擊下方「教職諮詢/預約導師」取得學者專長聯繫渠道。</p>`);
+            }
         }
 
         function renderNetworkChips() {
             const box = document.getElementById("active-skills-chips");
-            box.innerHTML = searchSkills.map(s => `
-                <span class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-md border border-indigo-200 flex items-center gap-1">
-                    ${s}<i onclick="toggleNetworkTag('${s}')" data-lucide="x" class="w-3 h-3 cursor-pointer"></i>
+            if (activeTeamSkills.length === 0) {
+                box.innerHTML = `<span class="text-[10px] text-slate-400 font-bold">請於下方選取技術條件...</span>`;
+                return;
+            }
+            box.innerHTML = activeTeamSkills.map(s => `
+                <span class="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-indigo-200/60 flex items-center gap-1 shadow-sm">
+                    ${s}<i onclick="toggleNetworkTag('${s}', 'team')" data-lucide="x" class="w-3 h-3 cursor-pointer text-indigo-400 hover:text-indigo-600"></i>
                 </span>
             `).join('');
             lucide.createIcons();
         }
 
         function fetchNetworkData() {
-            const dept = document.getElementById("network-dept-select").value;
-            const cardsBox = document.getElementById("network-cards-box");
-            const presets = NETWORK_TAGS_PRESETS[networkTab];
-            
-            document.getElementById("network-quick-tags").innerHTML = presets.map(t => {
-                const isAct = searchSkills.includes(t);
-                return `<button onclick="toggleNetworkTag('${t}')" class="px-2.5 py-1 text-[10px] rounded-md font-bold border transition-all ${isAct ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'}">${t}</button>`;
+            const teamDept = document.getElementById("team-dept-filter").value;
+            const teamYear = document.getElementById("team-year-filter").value;
+
+            // 1. Populate presets for quick tags
+            document.getElementById("network-quick-tags-team").innerHTML = NETWORK_TAGS_PRESETS.team.map(t => {
+                const isActive = activeTeamSkills.includes(t);
+                return `<button onclick="toggleNetworkTag('${t}', 'team')" class="px-3 py-1.5 text-[10px] rounded-xl font-bold border transition-all ${isActive ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}">${t}</button>`;
             }).join('');
 
-            // 依系所與標籤做純前端過濾
-            if (networkTab === 'team') {
-                document.getElementById("network-results-title").innerText = `庫存夥伴名單 (系所: ${dept})`;
-                let filtered = STUDENTS_MOCK;
-                if (dept !== "所有系所") filtered = filtered.filter(s => s.dept === dept);
-                if (searchSkills.length > 0) filtered = filtered.filter(s => s.skills.some(sk => searchSkills.includes(sk)));
+            document.getElementById("network-quick-tags-mentors").innerHTML = NETWORK_TAGS_PRESETS.mentors.map(t => {
+                return `<button onclick="toggleNetworkTag('${t}', 'mentor')" class="px-3 py-1.5 text-[10px] rounded-xl font-bold border bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 transition-all">${t}</button>`;
+            }).join('');
 
-                cardsBox.innerHTML = filtered.map(s => `
-                    <div class="p-4 border border-slate-200/60 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 text-left shadow-sm">
-                        <div class="flex items-center gap-3.5">
-                            <img src="${s.avatar}" class="w-11 h-11 rounded-full object-cover">
-                            <div>
-                                <p class="font-black text-xs text-slate-900">${s.name} <span class="text-[9px] bg-indigo-50 text-indigo-600 font-extrabold px-1.5 py-0.5 rounded ml-1">${s.dept} • ${s.year}</span></p>
-                                <div class="flex flex-wrap gap-1 mt-1">${s.skills.map(sk => `<span class="bg-slate-100 text-slate-600 text-[9px] px-1.5 py-0.5 rounded font-bold">${sk}</span>`).join('')}</div>
-                            </div>
-                        </div>
-                        <button onclick="openInviteModal('${s.name}')" class="px-4 py-2 bg-indigo-600 font-black text-[11px] text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-colors">邀請組隊</button>
-                    </div>
-                `).join('');
-            } else {
-                document.getElementById("network-results-title").innerText = `校友專家智囊名單 (系所: ${dept})`;
-                let filtered = ALUMNI_MOCK;
-                if (dept !== "所有系所") filtered = filtered.filter(a => a.dept === dept);
-                if (searchSkills.length > 0) filtered = filtered.filter(a => a.tags.some(tg => searchSkills.includes(tg)));
-
-                cardsBox.innerHTML = filtered.map(a => `
-                    <div class="p-4 border border-slate-200/60 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 text-left shadow-sm">
-                        <div class="flex items-center gap-3.5">
-                            <img src="${a.avatar}" class="w-11 h-11 rounded-full object-cover">
-                            <div>
-                                <p class="font-black text-xs text-slate-900">${a.name} <span class="text-[9px] bg-emerald-50 text-emerald-700 font-extrabold px-1.5 py-0.5 rounded ml-1">${a.role} @ ${a.company}</span></p>
-                                <div class="flex flex-wrap gap-1 mt-1">${a.tags.map(tg => `<span class="bg-indigo-50/50 text-indigo-700 text-[9px] px-1.5 py-0.5 rounded font-bold">${tg}</span>`).join('')}</div>
-                            </div>
-                        </div>
-                        <button onclick="openAlumniModal('${a.name}')" class="px-4 py-2 bg-slate-900 font-black text-[11px] text-white rounded-xl shadow-sm hover:bg-slate-800 transition-colors">預約導師</button>
-                    </div>
-                `).join('');
+            // 2. Filter & render Student Team List
+            let filteredStudents = STUDENTS_MOCK;
+            if (teamDept !== "All") filteredStudents = filteredStudents.filter(s => s.dept === teamDept);
+            if (teamYear !== "All") filteredStudents = filteredStudents.filter(s => s.year === (teamYear === 'Junior' ? '大三' : '大四'));
+            if (activeTeamSkills.length > 0) {
+                filteredStudents = filteredStudents.filter(s => s.skills.some(sk => activeTeamSkills.includes(sk)));
             }
+
+            document.getElementById("student-match-count").innerText = `Matching Students (${filteredStudents.length})`;
+
+            document.getElementById("students-match-list").innerHTML = filteredStudents.map(s => `
+                <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/30 hover:bg-white hover:shadow-sm hover:border-slate-200/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <img src="${s.avatar}" class="w-11 h-11 rounded-xl object-cover ring-2 ring-slate-100">
+                        <div>
+                            <p class="font-black text-xs text-slate-900">${s.name} <span class="text-[9px] bg-indigo-50 text-indigo-600 font-extrabold px-1.5 py-0.5 rounded ml-1">${s.dept} • ${s.year}</span></p>
+                            <div class="flex flex-wrap gap-1 mt-1.5">${s.skills.map(sk => `<span class="bg-slate-100 text-slate-600 text-[8px] px-1.5 py-0.5 rounded font-black">${sk}</span>`).join('')}</div>
+                            <p class="text-[9px] text-emerald-600 font-bold mt-1.5 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> ${s.avail}</p>
+                        </div>
+                    </div>
+                    <button onclick="openInviteModal('${s.name}')" class="px-4 py-2 bg-indigo-600 font-black text-[11px] text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-colors">邀請組隊</button>
+                </div>
+            `).join('');
+
+            // 3. Render Professors and Mentors List
+            document.getElementById("mentors-match-list").innerHTML = MENTORS_MOCK.map(m => {
+                const isFaculty = m.tags.includes("Faculty");
+                return `
+                    <div class="p-4 border border-slate-100 rounded-2xl bg-slate-50/30 hover:bg-white hover:shadow-sm hover:border-slate-200/60 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <img src="${m.avatar}" class="w-11 h-11 rounded-xl object-cover ring-2 ring-slate-100">
+                            <div>
+                                <p class="font-black text-xs text-slate-900">${m.name} <span class="text-[9px] ${isFaculty ? 'bg-amber-50 text-amber-700 border border-amber-200/50' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'} font-extrabold px-1.5 py-0.5 rounded ml-1">${isFaculty ? '資管專任教師' : '業界專家校友'}</span></p>
+                                <p class="text-[10px] text-slate-400 font-bold mt-0.5">${m.role}</p>
+                                <div class="flex flex-wrap gap-1 mt-1.5">${m.tags.map(tg => `<span class="text-[8px] px-1.5 py-0.5 rounded font-black ${tg === 'Faculty' || tg === 'Alumni' ? 'bg-slate-100 text-slate-500' : 'bg-indigo-50/50 text-indigo-700'}">${tg}</span>`).join('')}</div>
+                            </div>
+                        </div>
+                        <button onclick="openAlumniModal('${m.name}', '${isFaculty ? '學術 / 專題研究室諮詢' : '一對一職涯專家導師預約'}')" class="px-4 py-2 ${isFaculty ? 'bg-amber-600 hover:bg-amber-700' : 'bg-slate-900 hover:bg-slate-800'} font-black text-[11px] text-white rounded-xl shadow-sm transition-colors shrink-0">
+                            ${isFaculty ? '教職諮詢' : '預約導師'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // 職缺綜合過濾
+        // Job opportunities interactive pipeline
         function filterJobs(source) {
             currentJobSourceFilter = source;
             const btns = document.querySelectorAll("#job-source-filters button");
             btns.forEach(b => b.className = "job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-white text-slate-600 border-slate-200");
-            event.target.className = "job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-indigo-600 text-white border-indigo-600";
+            event.target.className = "job-src-btn px-4 py-2 rounded-xl text-[11px] font-black border transition-all bg-indigo-600 text-white border-indigo-600 shadow-sm";
             fetchJobsData();
         }
 
         function setJobTechTagFilter(tag) {
             currentJobTechTag = tag;
             const btns = document.querySelectorAll("#job-tech-tags button");
-            btns.forEach(b => b.className = "job-tag-btn px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-[10px] rounded-md border border-slate-200");
-            event.target.className = "job-tag-btn px-2.5 py-1 bg-indigo-50 text-indigo-700 font-black text-[10px] rounded-md border border-indigo-200";
+            btns.forEach(b => b.className = "job-tag-btn px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-[10px] rounded-md border border-slate-200 hover:bg-slate-50");
+            event.target.className = "job-tag-btn px-2.5 py-1 bg-indigo-50 text-indigo-700 font-black text-[10px] rounded-md border border-indigo-200 shadow-sm";
             fetchJobsData();
         }
 
         function fetchJobsData() {
+            // Build all dynamic tags present in jobs data
+            const allTags = Array.from(new Set(JOBS_MOCK.flatMap(j => j.tags)));
+            document.getElementById("job-tech-tags").innerHTML = `
+                <button onclick="setJobTechTagFilter(null)" class="job-tag-btn px-2.5 py-1 bg-indigo-50 text-indigo-700 font-black text-[10px] rounded-md border border-indigo-200 shadow-sm">顯示所有技術</button>
+                ` + allTags.map(t => {
+                    const isActive = currentJobTechTag === t;
+                    return `<button onclick="setJobTechTagFilter('${t}')" class="job-tag-btn px-2.5 py-1 ${isActive ? 'bg-indigo-50 text-indigo-700 border-indigo-200 font-black' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-50'} font-bold text-[10px] rounded-md border transition-all">${t}</button>`;
+                }).join('');
+
             let filtered = JOBS_MOCK;
             if (currentJobSourceFilter !== 'all') filtered = filtered.filter(j => j.source === currentJobSourceFilter);
             if (currentJobTechTag) filtered = filtered.filter(j => j.tags.includes(currentJobTechTag));
 
             document.getElementById("jobs-cards-box").innerHTML = filtered.map(j => `
-                <div class="p-4 border border-slate-200/60 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 text-left shadow-sm">
+                <div class="p-5 border border-slate-100 rounded-3xl bg-slate-50/20 hover:bg-white hover:shadow-md hover:border-slate-200/50 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-5 duration-300">
                     <div class="flex items-start gap-4">
-                        <div class="w-11 h-11 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-xl shrink-0">${j.logo}</div>
-                        <div>
-                            <h4 class="font-black text-xs text-slate-900">${j.title} <span class="text-[9px] bg-slate-100 text-slate-500 font-black px-1.5 py-0.5 rounded border uppercase ml-1">${j.source}</span></h4>
-                            <p class="text-[10px] text-slate-500 font-bold">${j.company} • ${j.loc}</p>
-                            <div class="flex flex-wrap gap-1 mt-1.5">${j.tags.map(t => `<span class="bg-indigo-50 text-indigo-600 text-[8px] font-black px-1.5 py-0.5 rounded">${t}</span>`).join('')}</div>
+                        <div class="w-12 h-12 bg-white border border-slate-150 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm">${j.logo}</div>
+                        <div class="space-y-1">
+                            <h4 class="font-black text-sm text-slate-900 flex flex-wrap items-center gap-1.5">
+                                ${j.title} 
+                                <span class="text-[8px] bg-slate-100 text-slate-500 font-black px-1.5 py-0.5 rounded border border-slate-200 uppercase">${j.source}</span>
+                                <span class="text-[8px] bg-indigo-50 text-indigo-600 font-black px-1.5 py-0.5 rounded border border-indigo-150 uppercase">${j.type}</span>
+                            </h4>
+                            <p class="text-[11px] text-slate-500 font-bold">${j.company} • ${j.loc} • ${j.mode}</p>
+                            <div class="flex flex-wrap gap-1.5 pt-1">${j.tags.map(t => `<span class="bg-indigo-50 text-indigo-600 text-[8px] font-black px-1.5 py-0.5 rounded-lg border border-indigo-100/50">${t}</span>`).join('')}</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4 justify-end">
-                        <div class="text-right">
-                            <p class="text-xs font-black text-emerald-600">${j.match}% Match</p>
+                    <div class="flex items-center gap-4 justify-between lg:justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-100">
+                        <div class="text-left lg:text-right">
+                            <p class="text-xs font-black text-emerald-600 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>${j.match}% Match</p>
                             <div class="w-16 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden"><div class="h-full bg-emerald-500" style="width: ${j.match}%"></div></div>
                         </div>
-                        <button onclick="openJobModal(${JSON.stringify(j).replace(/"/g, '&quot;')})" class="px-4 py-2 bg-indigo-600 font-black text-[11px] text-white rounded-xl shadow-md shadow-indigo-100/40 hover:bg-indigo-700 transition-colors">分析詳情</button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="showMockDashboardNotice()" class="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-slate-50 border border-slate-100 rounded-xl transition-all"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
+                            <button onclick="openJobModal(${JSON.stringify(j).replace(/"/g, '&quot;')})" class="px-4 py-2.5 bg-indigo-600 font-black text-[11px] text-white rounded-xl shadow-md shadow-indigo-100/40 hover:bg-indigo-700 transition-colors">分析詳情</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
+            lucide.createIcons();
         }
 
-        // 全域切換分頁控制
         function switchTab(id) {
             activeTab = id;
             const tabs = ["assessment", "learning", "network", "jobs"];
             tabs.forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add("hidden");
-                document.getElementById(`menu-${t}`).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40";
+                document.getElementById(`menu-${t}`).className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/40";
             });
 
             document.getElementById(`tab-${id}`).classList.remove("hidden");
-            document.getElementById(`menu-${id}`).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-sm";
+            document.getElementById(`menu-${id}`).className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-sm";
             
             const titles = { assessment: "Career Assessment", learning: "Learning & Certification", network: "Skill & Mentorship Network", jobs: "Job Opportunities" };
+            const subtitles = {
+                assessment: "Discover your best-fit careers based on your interests and academic capabilities.",
+                learning: "Personalized courses, certifications, and campus activities to boost your career path.",
+                network: "Find the right students to collaborate with on projects or seek expert mentoring.",
+                jobs: "Smart matching engine that connects you with the most relevant corporate internship opportunities."
+            };
+            
             document.getElementById("header-title").innerText = titles[id];
+            document.getElementById("header-subtitle").innerText = subtitles[id];
+
+            if (isMobileSidebarOpen) toggleMobileSidebar();
 
             renderCapabilitiesAndCharts();
 
@@ -684,7 +1233,6 @@
             if (id === 'jobs') fetchJobsData();
         }
 
-        // Modal 視窗機制
         function openModal(title, body) {
             document.getElementById("modal-title").innerText = title;
             document.getElementById("modal-body").innerHTML = body;
@@ -692,9 +1240,9 @@
         }
         function closeModal() { document.getElementById("modal-backdrop").classList.add("hidden"); }
 
-        function openInviteModal(name) { openModal(`向 ${name} 發送邀請`, `<p>已成功啟用 YZU 跨學群組隊協定。你可以透過下方信箱聯繫進行專題：</p><p class="p-3 bg-slate-50 border rounded font-mono text-indigo-600 font-black">s109XXXX@mail.yzu.edu.tw</p>`); }
-        function openAlumniModal(name) { openModal(`聯繫校友導師 ${name}`, `<p>學長姐將為你解答技能落差疑惑，請發送郵件預約：</p><p class="p-3 bg-slate-50 border rounded font-mono text-indigo-600 font-black">${name.toLowerCase().replace(' ', '')}@alumni.yzu.edu.tw</p>`); }
-        function openJobModal(j) { openModal(`${j.company} - ${j.title}`, `<p class="font-black text-slate-800">職務背景與媒合度分析：</p><p>${j.description}</p><p class="font-bold text-[11px] text-slate-400 mt-2">必備技術技能要求：${j.tags.join(', ')}</p>`); }
+        function openInviteModal(name) { openModal(`與 ${name} 發送協同邀請`, `<p>已成功啟用 YZU 跨系級組隊協作信道。你可以透過元智校內電子郵箱聯繫對方，討論期末專案、大專畢業專案或校外黑客松組隊合作：</p><p class="p-3 bg-slate-50 border rounded font-mono text-indigo-600 font-black mt-3">s111XXXX@mail.yzu.edu.tw</p>`); }
+        function openAlumniModal(name, typeText) { openModal(`${typeText}: ${name}`, `<p>歡迎學弟妹點選諮詢，我們已經為您開通專屬諮詢通道。你可以將你想請益的學業或技能落差大綱發送至：</p><p class="p-3 bg-slate-50 border rounded font-mono text-indigo-600 font-black mt-3">${name.toLowerCase().replace(' ', '')}@yzu.edu.tw</p>`); }
+        function openJobModal(j) { openModal(`${j.company} - ${j.title}`, `<p class="font-black text-slate-800">● 職務背景與適配度分析：</p><p class="mt-1 leading-relaxed">${j.description}</p><p class="font-bold text-[11px] text-slate-400 mt-4 border-t pt-2.5">要求技術能力 Tags：${j.tags.join(', ')}</p>`); }
     </script>
 </body>
 </html>
